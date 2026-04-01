@@ -1,2 +1,0 @@
-# learmy
-Website for learmy 
