@@ -1,1 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learmy Music Institute – Bengaluru</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+  :root {
+    --bg: #0a0706;
+    --surface: #110e0c;
+    --gold: #c9922a;
+    --gold-light: #e8b96a;
+    --gold-pale: #f5dfa0;
+    --cream: #f2ead8;
+    --warm-white: #faf6ef;
+    --text: #e8dcc8;
+    --muted: #8a7860;
+    --accent: #7c3d2a;
+    --border: rgba(201,146,42,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9990;
+    opacity: 0.4;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(10,7,6,0.95);
+    backdrop-filter: blur(20px);
+    padding: 16px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--warm-white);
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+  .nav-cta {
+    background: var(--gold);
+    color: var(--bg) !important;
+    padding: 10px 24px;
+    border-radius: 2px;
+    font-weight: 600 !important;
+    color: #0a0706 !important;
+    transition: background 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--gold-light) !important; color: var(--bg) !important; }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 200;
+  }
+  .hamburger span {
+    width: 26px; height: 2px;
+    background: var(--gold);
+    transition: all 0.3s;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 60px 80px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--warm-white);
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+  .hero-title .italic {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.65s forwards;
+  }
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.95s forwards;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: scaleX(1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,146,42,0.35); }
+  .btn-ghost {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+  }
+  .btn-ghost:hover { color: var(--gold-light); border-color: var(--gold); }
+
+  .hero-badge {
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.1s forwards;
+  }
+  .stars {
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 2px;
+  }
+  .badge-text {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .badge-text strong {
+    color: var(--gold-pale);
+    font-weight: 600;
+  }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-visual {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a0f08 0%, #2a1810 50%, #1a0f08 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 50%, rgba(201,146,42,0.12) 0%, transparent 70%);
+  }
+  .notes-float {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .note {
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--gold);
+    opacity: 0.15;
+    animation: floatNote linear infinite;
+  }
+  @keyframes floatNote {
+    0% { transform: translateY(110%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.08; }
+    100% { transform: translateY(-110%) rotate(360deg); opacity: 0; }
+  }
+  .hero-instrument {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+  .big-note {
+    font-size: 18rem;
+    color: var(--gold);
+    opacity: 0.08;
+    line-height: 1;
+    font-family: serif;
+    filter: blur(1px);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.06;transform:scale(1)} 50%{opacity:0.12;transform:scale(1.05)} }
+
+  .hero-overlay-text {
+    position: absolute;
+    bottom: 80px;
+    right: 40px;
+    z-index: 3;
+    text-align: right;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+  }
+  .hero-overlay-text .big-stat {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .hero-overlay-text .stat-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Decorative line */
+  .hero-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    z-index: 5;
+    animation: growLine 1s ease 1.5s backwards;
+  }
+  @keyframes growLine { from{height:0;opacity:0} to{height:80px;opacity:1} }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--gold);
+    padding: 14px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 18s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--bg);
+    letter-spacing: 0.05em;
+  }
+  .marquee-dot { width: 5px; height: 5px; background: var(--bg); border-radius: 50%; opacity: 0.5; }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* SECTION STYLES */
+  section { padding: 120px 60px; }
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    color: var(--warm-white);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .section-title .italic { font-style: italic; color: var(--gold-light); }
+
+  /* ABOUT */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .about::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,146,42,0.06), transparent 70%);
+    pointer-events: none;
+  }
+  .about-text p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .about-text p strong { color: var(--gold-pale); font-weight: 600; }
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .stat-item {
+    background: var(--surface);
+    padding: 30px;
+    text-align: center;
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-name {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-card {
+    background: linear-gradient(135deg, #1e1208, #2d1a0f);
+    border: 1px solid var(--border);
+    padding: 60px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card::after {
+    content: '♪';
+    position: absolute;
+    bottom: -20px; right: 20px;
+    font-size: 8rem;
+    color: var(--gold);
+    opacity: 0.06;
+    font-family: serif;
+  }
+  .about-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--gold-pale);
+    margin-bottom: 16px;
+  }
+  .about-card p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 0.82rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+  .location-tag svg { opacity: 0.7; }
+
+  /* SERVICES */
+  .services { background: var(--bg); }
+  .services-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 70px;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    background: var(--surface);
+    padding: 50px 40px;
+    transition: background 0.4s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .service-card:hover { background: #1a120c; }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .service-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--warm-white);
+    margin-bottom: 12px;
+  }
+  .service-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .service-tag {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+  }
+
+  /* WHY US */
+  .why { background: var(--surface); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-top: 70px;
+  }
+  .why-item {
+    position: relative;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .why-item:hover { border-color: var(--gold); }
+  .why-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--gold);
+    opacity: 0.2;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .why-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--warm-white);
+    margin-bottom: 10px;
+  }
+  .why-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--bg); }
+  .testimonials-header { margin-bottom: 70px; }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .testimonial-card {
+    background: var(--surface);
+    padding: 50px 40px;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .testimonial-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+  .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.2;
+    line-height: 0.5;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 30px;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+  }
+  .author-avatar {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+  .author-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold-pale);
+  }
+  .author-role {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .review-stars {
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  /* CONTACT */
+  .contact {
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact-info { padding-top: 10px; }
+  .contact-detail {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-detail:last-child { border-bottom: none; }
+  .contact-icon {
+    width: 44px; height: 44px;
+    background: rgba(201,146,42,0.1);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    color: var(--gold);
+    transition: background 0.3s;
+  }
+  .contact-detail:hover .contact-icon { background: rgba(201,146,42,0.2); }
+  .contact-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .contact-value {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .contact-value a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-value a:hover { color: var(--gold-light); }
+
+  /* FORM */
+  .contact-form {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 50px 44px;
+  }
+  .form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--warm-white);
+    margin-bottom: 32px;
+  }
+  .form-group {
+    margin-bottom: 22px;
+  }
+  .form-label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold);
+  }
+  .form-select option { background: var(--surface); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+  .form-submit:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .success-msg {
+    display: none;
+    background: rgba(201,146,42,0.1);
+    border: 1px solid var(--gold);
+    padding: 16px;
+    text-align: center;
+    color: var(--gold-pale);
+    font-size: 0.9rem;
+    margin-top: 16px;
+  }
+
+  /* HOURS BADGE */
+  .hours-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(50,200,100,0.1);
+    border: 1px solid rgba(50,200,100,0.3);
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    color: #5dca80;
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+  }
+  .hours-dot {
+    width: 7px; height: 7px;
+    background: #5dca80;
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* FOOTER */
+  footer {
+    background: #060403;
+    padding: 60px 60px 40px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--warm-white);
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .footer-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+  }
+  .footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-copy {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .footer-copy strong { color: var(--gold); }
+  .social-links {
+    display: flex;
+    gap: 16px;
+  }
+  .social-link {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+  }
+  .social-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,7,6,0.98);
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      z-index: 150;
+    }
+    .nav-links.open a { font-size: 1.2rem; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 120px 24px 60px; }
+    .hero-right { display: none; }
+    section { padding: 80px 24px; }
+    .about, .contact { grid-template-columns: 1fr; gap: 50px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .services-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    footer { padding: 40px 24px 30px; }
+    .footer-top, .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">Learmy <span>Music</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Courses</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact" class="nav-cta">Enroll Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Bengaluru's Premier Music School</div>
+    <h1 class="hero-title">
+      Where Music<br><span class="italic">Comes Alive</span>
+    </h1>
+    <div class="hero-subtitle">Learn. Create. Perform.</div>
+    <p class="hero-desc">Discover your musical voice at Learmy Music Institute — a place where passion meets pedagogy, and every student's journey is uniquely their own.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">
+        Begin Your Journey
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="tel:+919696177843" class="btn-ghost">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        096961 77843
+      </a>
+    </div>
+    <div class="hero-badge">
+      <div class="stars">★★★★★</div>
+      <div class="badge-text"><strong>5.0 Rating</strong> · 35+ Happy Students · Open 24 Hours</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="notes-float" id="notesFloat"></div>
+      <div class="hero-instrument">
+        <div class="big-note">♪</div>
+      </div>
+      <div class="hero-overlay-text">
+        <div class="big-stat">5.0</div>
+        <div class="stat-label">Google Rating</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-line"></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item">Guitar <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Vocal Training <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Keyboard <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Carnatic Music <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Drums <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Western Music <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Music Theory <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Ukulele <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Violin <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Guitar <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Vocal Training <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Keyboard <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Carnatic Music <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Drums <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Western Music <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Music Theory <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Ukulele <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Violin <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-text reveal">
+    <div class="section-label">Our Story</div>
+    <h2 class="section-title">Nurturing <span class="italic">Musical Dreams</span></h2>
+    <p>At <strong>Learmy Music Institute</strong>, we believe music is not just an art — it's a language that transcends boundaries and transforms lives. Nestled in the heart of Nagondanahalli, Bengaluru, we've built a sanctuary for aspiring musicians of all ages.</p>
+    <p>Our institute blends time-honoured classical traditions with <strong>contemporary teaching methods</strong>, ensuring every student receives a holistic musical education tailored to their goals, pace, and passion.</p>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-number" data-count="35">0</div>
+        <div class="stat-name">Students</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">5.0</div>
+        <div class="stat-name">Rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" data-count="8">0</div>
+        <div class="stat-name">Courses</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-name">Open</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-visual reveal">
+    <div class="about-card">
+      <div class="about-card-title">A Passion for Music Education</div>
+      <p>From our founder's vision to your musical breakthrough — Learmy is where dedicated instructors meet curious students in a warm, encouraging environment that sparks genuine love for music.</p>
+      <div class="hours-badge">
+        <span class="hours-dot"></span>
+        Open 24 Hours · 7 Days a Week
+      </div>
+      <div class="location-tag">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Shop 1 Vasupradha 103, SSVR Crescent, Nagondanahalli, Bengaluru – 560066
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header reveal">
+    <div>
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title">Our <span class="italic">Courses</span></h2>
+    </div>
+    <a href="#contact" class="btn-primary">Explore All</a>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <span class="service-icon">🎸</span>
+      <div class="service-name">Guitar</div>
+      <p class="service-desc">Acoustic, electric & bass. From basic chords to advanced fingerpicking techniques. Classical, rock, jazz, and Bollywood styles.</p>
+      <span class="service-tag">Beginner – Advanced</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🎹</span>
+      <div class="service-name">Keyboard & Piano</div>
+      <p class="service-desc">Master scales, compositions, and improvisations. Both Western classical and contemporary piano training available.</p>
+      <span class="service-tag">All Ages</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🎤</span>
+      <div class="service-name">Vocal Training</div>
+      <p class="service-desc">Build your voice with breath control, pitch, and performance coaching. Carnatic, Hindustani, and Western vocal styles.</p>
+      <span class="service-tag">Classical & Western</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🥁</span>
+      <div class="service-name">Drums & Percussion</div>
+      <p class="service-desc">Develop rhythm, timing, and coordination. Drum kit, tabla, and world percussion. Fun for all ages and levels.</p>
+      <span class="service-tag">Beginner Welcome</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🎻</span>
+      <div class="service-name">Violin & Strings</div>
+      <p class="service-desc">Classical violin training with structured curriculum. Individual attention for each student to develop tone and technique.</p>
+      <span class="service-tag">Classical Training</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🎵</span>
+      <div class="service-name">Music Theory</div>
+      <p class="service-desc">Learn notation, harmony, composition, and music history. A strong foundation for any musical journey across all instruments.</p>
+      <span class="service-tag">Foundation Course</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="why">
+  <div class="reveal">
+    <div class="section-label">Why Choose Us</div>
+    <h2 class="section-title">The Learmy <span class="italic">Difference</span></h2>
+  </div>
+  <div class="why-grid reveal">
+    <div class="why-item">
+      <div class="why-number">01</div>
+      <div class="why-title">Expert Instructors</div>
+      <p class="why-desc">Learn from trained musicians and certified instructors with years of performing and teaching experience.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-number">02</div>
+      <div class="why-title">Personalised Learning</div>
+      <p class="why-desc">Every student gets an individualised curriculum tailored to their pace, interests, and musical ambitions.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-number">03</div>
+      <div class="why-title">Flexible Schedules</div>
+      <p class="why-desc">Open 24 hours a day — we work around your timetable with morning, evening, and weekend batches available.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-number">04</div>
+      <div class="why-title">Warm Environment</div>
+      <p class="why-desc">A nurturing, encouraging space where students of all ages feel confident to learn, experiment, and grow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="reviews">
+  <div class="testimonials-header reveal">
+    <div class="section-label">Student Reviews</div>
+    <h2 class="section-title">What Our Students <span class="italic">Say</span></h2>
+  </div>
+  <div class="testimonials-grid reveal">
+    <div class="testimonial-card">
+      <span class="quote-mark">"</span>
+      <div class="review-stars">★★★★★</div>
+      <p class="testimonial-text">Joining Learmy was the best decision I ever made. My guitar teacher is incredibly patient and makes every session enjoyable. I went from zero to playing full songs in just two months!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">R</div>
+        <div>
+          <div class="author-name">Rahul M.</div>
+          <div class="author-role">Guitar Student</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="quote-mark">"</span>
+      <div class="review-stars">★★★★★</div>
+      <p class="testimonial-text">The vocal training here is exceptional. The instructor focuses on breathing techniques and tone quality. My confidence has grown so much since I started. Highly recommend to anyone in Bengaluru!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">P</div>
+        <div>
+          <div class="author-name">Priya S.</div>
+          <div class="author-role">Vocals Student</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="quote-mark">"</span>
+      <div class="review-stars">★★★★★</div>
+      <p class="testimonial-text">I enrolled my 8-year-old daughter for keyboard lessons. The teacher is amazing with kids — so patient and fun! She looks forward to every class. Truly a 5-star experience.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div>
+          <div class="author-name">Anitha K.</div>
+          <div class="author-role">Parent of Student</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-info reveal">
+    <div class="section-label">Get in Touch</div>
+    <h2 class="section-title">Start Your <span class="italic">Journey</span></h2>
+    <br>
+    <div class="contact-detail">
+      <div class="contact-icon">📍</div>
+      <div>
+        <div class="contact-label">Address</div>
+        <div class="contact-value">Shop 1 Vasupradha 103, SSVR Crescent,<br>Opp. Sanvi Sankalpam Main Road,<br>Nagondanahalli, Bengaluru, Karnataka 560066</div>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">📞</div>
+      <div>
+        <div class="contact-label">Phone</div>
+        <div class="contact-value"><a href="tel:+919696177843">096961 77843</a></div>
+        <div class="hours-badge" style="margin-top:10px">
+          <span class="hours-dot"></span>
+          Open 24 Hours
+        </div>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">💬</div>
+      <div>
+        <div class="contact-label">WhatsApp</div>
+        <div class="contact-value"><a href="https://wa.me/919696177843" target="_blank">Chat on WhatsApp →</a></div>
+      </div>
+    </div>
+    <div class="contact-detail">
+      <div class="contact-icon">⭐</div>
+      <div>
+        <div class="contact-label">Rating</div>
+        <div class="contact-value" style="color:var(--gold)">★★★★★ 5.0 (35 reviews)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form reveal">
+    <div class="form-title">Book a Free Trial Class</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-input" placeholder="+91 ">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" placeholder="you@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course of Interest</label>
+      <select class="form-select">
+        <option value="">Select a course...</option>
+        <option>Guitar</option>
+        <option>Keyboard & Piano</option>
+        <option>Vocal Training</option>
+        <option>Drums & Percussion</option>
+        <option>Violin & Strings</option>
+        <option>Music Theory</option>
+        <option>Ukulele</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message (Optional)</label>
+      <textarea class="form-textarea" placeholder="Tell us about your experience level or any questions..."></textarea>
+    </div>
+    <button class="form-submit" onclick="handleSubmit()">Request Free Trial →</button>
+    <div class="success-msg" id="successMsg">
+      🎵 Thank you! We'll reach out within 24 hours to confirm your free trial class.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Learmy <span>Music</span></div>
+      <div class="footer-tagline">Where every note tells a story.</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Courses</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 <strong>Learmy Music Institute</strong> · Nagondanahalli, Bengaluru 560066</div>
+    <div class="social-links">
+      <a href="https://wa.me/919696177843" class="social-link" target="_blank" title="WhatsApp">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.555 4.116 1.528 5.845L.057 23.846a.5.5 0 00.603.617l6.156-1.614A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.857 9.857 0 01-5.031-1.381l-.361-.214-3.741.981.999-3.647-.235-.374A9.86 9.86 0 012.1 12c0-5.461 4.439-9.9 9.9-9.9s9.9 4.439 9.9 9.9-4.439 9.9-9.9 9.9z"/></svg>
+      </a>
+      <a href="tel:+919696177843" class="social-link" title="Call">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      cursorRing.style.left = e.clientX + 'px';
+      cursorRing.style.top = e.clientY + 'px';
+    }, 60);
+  });
+  document.querySelectorAll('a,button,.service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px';
+      cursorRing.style.width = '60px'; cursorRing.style.height = '60px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px'; cursor.style.height = '12px';
+      cursorRing.style.width = '40px'; cursorRing.style.height = '40px';
+    });
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // Floating notes
+  const notes = ['♪','♩','♫','♬','𝄞','𝄢','♭','♮'];
+  const notesFloat = document.getElementById('notesFloat');
+  function createNote() {
+    const note = document.createElement('span');
+    note.className = 'note';
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.left = Math.random() * 100 + '%';
+    note.style.animationDuration = (6 + Math.random() * 8) + 's';
+    note.style.animationDelay = Math.random() * 4 + 's';
+    note.style.fontSize = (1 + Math.random() * 2) + 'rem';
+    notesFloat.appendChild(note);
+    setTimeout(() => note.remove(), 16000);
+  }
+  setInterval(createNote, 800);
+  for(let i = 0; i < 6; i++) createNote();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Counter animation
+  function animateCounter(el) {
+    const target = parseInt(el.getAttribute('data-count'));
+    if (!target) return;
+    let current = 0;
+    const duration = 1500;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = Math.floor(current) + '+';
+      if (current >= target) clearInterval(timer);
+    }, 16);
+  }
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+  // Form submit
+  function handleSubmit() {
+    const inputs = document.querySelectorAll('.form-input, .form-select');
+    let valid = true;
+    inputs.forEach(inp => {
+      if (!inp.value.trim()) {
+        inp.style.borderColor = '#c44';
+        valid = false;
+      } else {
+        inp.style.borderColor = '';
+      }
+    });
+    if (valid) {
+      document.getElementById('successMsg').style.display = 'block';
+      inputs.forEach(inp => inp.value = '');
+      document.querySelector('.form-textarea').value = '';
+    }
+  }
+
+  // Smooth scroll for anchors
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
